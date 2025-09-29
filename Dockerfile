@@ -3,10 +3,10 @@ FROM maven:3.9.2-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copy Maven files first for dependency caching
+# Copy only pom.xml first to cache dependencies
 COPY pom.xml .
-COPY pom.xml mvnw .
-COPY .mvn .mvn
+
+# Download dependencies
 RUN mvn dependency:go-offline -B
 
 # Copy source code
@@ -28,5 +28,3 @@ EXPOSE 8080
 
 # Run the app
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
