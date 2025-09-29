@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+        <div class="flex items-center gap-6">
+            <a th:href="@{/candidate/applications}" class="text-gray-700 hover:text-blue-600 font-medium">Applied Jobs</a>
+            <a th:href="@{/candidate/profile}" class="text-gray-700 hover:text-blue-600 font-medium">Profile</a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-6 py-8 flex-1">
+
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Upload / Replace Resume</h2>
+
+        <!-- Success / Error Messages -->
+        <div th:if="${successMessage}" class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Current Resume -->
+        <div th:if="${profile.profileResumeFile != null}" class="mb-4">
+            <p class="font-medium">Current Resume:</p>
+            <span class="text-gray-700 font-semibold" th:text="${profile.profileResumeFile}"></span>
+        </div>
+        <div th:if="${profile.profileResumeFile == null}" class="mb-4 text-gray-400">
+            No resume uploaded yet.
+        </div>
+
+        <!-- Upload Form -->
+        <form th:action="@{/candidate/profile/resume/update}" method="post" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label for="resumeFile" class="block mb-2 font-medium">Select Resume (PDF, DOC, DOCX | Max 5MB)</label>
+                <input type="file" id="resumeFile" name="resumeFile" 
+                       class="border rounded px-3 py-2 w-full" required>
+            </div>
+
+            <button type="submit" 
+                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Upload / Replace
+            </button>
+            <a th:href="@{/candidate/profile}" 
+               class="ml-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+               Back to Profile
+            </a>
+        </form>
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t py-6 text-center text-gray-500 text-sm mt-auto">
+    © 2025 JobPortal. All rights reserved.
+</footer>
+
+</body>
+</html>

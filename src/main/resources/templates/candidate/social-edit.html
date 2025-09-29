@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Social / Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+        <div class="flex items-center gap-6">
+            <a th:href="@{/candidate/profile}" class="text-gray-700 hover:text-blue-600 font-medium">Profile</a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-6 py-8 flex-1">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Edit Social / Portfolio</h2>
+
+        <!-- Success / Error Messages -->
+        <div th:if="${successMessage}" class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/candidate/profile/social/update}" method="post">
+            <div class="mb-4">
+                <label class="block font-medium mb-1" for="linkedIn">LinkedIn URL</label>
+                <input type="url" id="linkedIn" name="linkedIn"
+                       th:value="${profile.linkedIn}" placeholder="https://www.linkedin.com/in/username"
+                       class="border rounded px-3 py-2 w-full">
+            </div>
+
+            <div class="mb-4">
+                <label class="block font-medium mb-1" for="github">GitHub URL</label>
+                <input type="url" id="github" name="github"
+                       th:value="${profile.github}" placeholder="https://github.com/username"
+                       class="border rounded px-3 py-2 w-full">
+            </div>
+
+            <div class="mb-4">
+                <label class="block font-medium mb-1" for="portfolioUrl">Portfolio URL</label>
+                <input type="url" id="portfolioUrl" name="portfolioUrl"
+                       th:value="${profile.portfolioUrl}" placeholder="https://yourportfolio.com"
+                       class="border rounded px-3 py-2 w-full">
+            </div>
+
+            <div>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+    Save Social Links
+</button>
+            
+                <a th:href="@{/candidate/profile}" class="ml-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                    Back to Profile
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

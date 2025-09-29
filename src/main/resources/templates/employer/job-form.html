@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Post a Job - JobPortal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+<div class="w-full max-w-lg bg-white rounded-xl shadow-lg p-8">
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Post a New Job</h2>
+
+    <form th:action="@{/employer/jobs}" th:object="${job}" method="post" class="space-y-4">
+
+        <!-- Job Title -->
+        <div>
+            <label class="block font-medium">Job Title</label>
+            <input type="text" th:field="*{title}" 
+                   class="w-full border border-gray-300 rounded px-3 py-2" 
+                   placeholder="Enter job title" required maxlength="100">
+            <div th:if="${#fields.hasErrors('title')}" class="text-red-600 text-sm" th:errors="*{title}"></div>
+        </div>
+
+        <!-- Job Description -->
+        <div>
+            <label class="block font-medium">Job Description</label>
+            <textarea th:field="*{description}" 
+                      class="w-full border border-gray-300 rounded px-3 py-2" 
+                      placeholder="Enter job description" required maxlength="2000"
+                      id="description"></textarea>
+            <div class="text-sm mt-1">
+                Characters left: <span id="charCount" class="text-blue-600 font-medium">2000</span>
+            </div>
+            <div th:if="${#fields.hasErrors('description')}" class="text-red-600 text-sm" th:errors="*{description}"></div>
+        </div>
+
+        <!-- Job Location -->
+        <div>
+            <label class="block font-medium">Job Location</label>
+            <input type="text" th:field="*{location}" 
+                   class="w-full border border-gray-300 rounded px-3 py-2" 
+                   placeholder="Enter job location" required>
+            <div th:if="${#fields.hasErrors('location')}" class="text-red-600 text-sm" th:errors="*{location}"></div>
+        </div>
+
+        <!-- Job Type -->
+        <div>
+            <label class="block font-medium">Job Type</label>
+            <select th:field="*{type}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <option value="">Select type</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Internship">Internship</option>
+                <option value="Freelance">Freelance</option>
+            </select>
+            <div th:if="${#fields.hasErrors('type')}" class="text-red-600 text-sm" th:errors="*{type}"></div>
+        </div>
+
+        <!-- Company Name -->
+        <div>
+            <label class="block font-medium">Company Name</label>
+            <input type="text" th:field="*{companyName}" 
+                   class="w-full border border-gray-300 rounded px-3 py-2" 
+                   placeholder="Enter company name" required>
+            <div th:if="${#fields.hasErrors('companyName')}" class="text-red-600 text-sm" th:errors="*{companyName}"></div>
+        </div>
+
+        <!-- Company Location -->
+        <div>
+            <label class="block font-medium">Company Location</label>
+            <input type="text" th:field="*{companyLocation}" 
+                   class="w-full border border-gray-300 rounded px-3 py-2" 
+                   placeholder="Enter company location" required>
+            <div th:if="${#fields.hasErrors('companyLocation')}" class="text-red-600 text-sm" th:errors="*{companyLocation}"></div>
+        </div>
+
+        <!-- Salary -->
+        <div>
+            <label class="block font-medium">Salary</label>
+            <input type="text" th:field="*{salary}" 
+                   class="w-full border border-gray-300 rounded px-3 py-2" 
+                   placeholder="Enter salary, e.g., ₹50k-70k/month" required>
+            <div th:if="${#fields.hasErrors('salary')}" class="text-red-600 text-sm" th:errors="*{salary}"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-center mt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                Post Job
+            </button>
+        </div>
+
+    </form>
+
+    <div class="mt-4 text-center">
+        <a href="/employer/dashboard" class="text-blue-600 underline">Back to Dashboard</a>
+    </div>
+</div>
+
+<script>
+    const description = document.getElementById("description");
+    const charCount = document.getElementById("charCount");
+    const maxChars = 2000;
+
+    description.addEventListener("input", () => {
+        const remaining = maxChars - description.value.length;
+        charCount.textContent = remaining >= 0 ? remaining : 0;
+    });
+</script>
+
+</body>
+</html>

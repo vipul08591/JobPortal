@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${job.title} + ' - Applications'">Applications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+
+    <!-- Navbar -->
+   <nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/employer/dashboard}">Job Portal</a>
+        </h1>
+        
+    </div>
+</nav>
+    <!-- Main -->
+    <main class="p-8 max-w-6xl mx-auto bg-white rounded-lg shadow mt-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+            Applications for <span class="text-blue-600" th:text="${job.title}">Job Title</span>
+        </h2>
+
+        <!-- Empty message -->
+        <div th:if="${applications.isEmpty()}" class="text-center py-10 bg-gray-50 rounded-lg">
+            <p class="text-gray-500 text-lg">No candidates have applied yet.</p>
+        </div>
+
+      <!-- Applications Table -->
+<div th:if="${!applications.isEmpty()}" class="overflow-x-auto mt-6">
+    <table class="min-w-full border border-gray-200 rounded-lg shadow-sm">
+        <thead class="bg-blue-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Candidate</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Resume</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Profile</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            <tr th:each="app : ${applications}" class="hover:bg-gray-50">
+                <!-- Candidate Name -->
+                <td class="px-6 py-4 text-gray-800" th:text="${app.candidate.name}">Candidate Name</td>
+
+                <!-- Candidate Email -->
+                <td class="px-6 py-4 text-gray-600" th:text="${app.candidate.email}">Email</td>
+
+                <!-- Status dropdown -->
+                <td class="px-6 py-4 relative">
+                    <select class="status-dropdown border border-gray-300 px-3 py-1 rounded-md text-sm focus:ring focus:ring-blue-200"
+                            th:data-appid="${app.id}">
+                        <option th:value="'Pending'" th:selected="${app.status == 'Pending'}">Pending</option>
+                        <option th:value="'Viewed'" th:selected="${app.status == 'Viewed'}">Viewed</option>
+                        <option th:value="'Shortlisted'" th:selected="${app.status == 'Shortlisted'}">Shortlisted</option>
+                        <option th:value="'Rejected'" th:selected="${app.status == 'Rejected'}">Not Shortlisted</option>
+                    </select>
+                    <span class="status-msg text-green-600 ml-2 hidden text-sm">✅ Updated</span>
+                </td>
+
+                <!-- Resume -->
+                <td class="px-6 py-4">
+                    <a th:href="@{'/employer/resumes/' + ${app.resumeFileName}}" target="_blank" 
+                       class="text-blue-600 hover:underline">View Resume</a>
+                </td>
+
+                <!-- Profile -->
+                <td class="px-6 py-4">
+                    <a th:href="@{'/employer/candidate/' + ${app.candidate.id}}" target="_blank"
+                       class="text-green-600 hover:underline">View Profile</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- JS for AJAX status update -->
+<script th:inline="javascript">
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+
+    document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('change', function() {
+            const appId = this.getAttribute('data-appid');
+            const newStatus = this.value;
+            const msg = this.parentElement.querySelector('.status-msg');
+
+            fetch('/employer/applications/' + appId + '/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    [csrfHeader]: csrfToken
+                },
+                body: 'status=' + encodeURIComponent(newStatus)
+            })
+            .then(response => {
+                if(response.ok) {
+                    msg.classList.remove('hidden');
+                    setTimeout(() => msg.classList.add('hidden'), 2000);
+                } else {
+                    alert('Failed to update status');
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

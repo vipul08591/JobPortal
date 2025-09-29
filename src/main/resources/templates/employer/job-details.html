@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Job Details - JobPortal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+
+	<!-- Header / Navbar -->
+	<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/employer/dashboard}">Job Portal</a>
+        </h1>
+        <div class="flex items-center gap-6">
+          
+            <button onclick="openLogoutModal()" class="text-red-600 hover:text-red-800 font-medium">Logout</button>
+        </div>
+    </div>
+</nav>
+
+	<!-- Main Content -->
+	<main
+		class="p-8 max-w-3xl mx-auto bg-white rounded-lg shadow space-y-6 mt-6">
+
+		<!-- Job Title -->
+		<h1 class="text-2xl font-bold text-center text-black"
+			th:text="${job.title}">Job Title</h1>
+
+		<!-- Job Info -->
+		<div class="space-y-3">
+			<p class="text-gray-700 flex items-center gap-2">
+				<svg xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+					stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 11c0 3.866-8 7-8 7s0-7 0-11c0-3.866 4-7 8-7s8 3.134 8 7c0 4-8 11-8 11s-8-7-8-11" />
+                </svg>
+				<strong>Location:</strong> <span th:text="${job.location}">Location</span>
+			</p>
+			<p class="text-gray-700 flex items-center gap-2">
+				<svg xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+					stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+						stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+				<strong>Type:</strong> <span th:text="${job.type}">Full-time</span>
+			</p>
+			<p class="text-gray-700 flex items-center gap-2">
+				<svg xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+					stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+						stroke-width="2"
+						d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+				<strong>Posted At:</strong> <span
+					th:text="${#temporals.format(job.postedAt, 'yyyy-MM-dd HH:mm')}">Date</span>
+			</p>
+		</div>
+
+		<!-- Job Description -->
+		<div>
+			<h2 class="text-lg font-semibold text-gray-800 mb-2">Description</h2>
+			<p class="text-gray-700 whitespace-pre-line"
+				th:text="${job.description}">Job description here...</p>
+		</div>
+
+
+
+	</main>
+</body>
+</html>

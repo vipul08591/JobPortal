@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #formMessage {
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+        <div class="flex items-center gap-6">
+            <a th:href="@{/candidate/applications}" class="text-gray-700 hover:text-blue-600 font-medium">Applied Jobs</a>
+            <a th:href="@{/candidate/profile}" class="text-gray-700 hover:text-blue-600 font-medium">Profile</a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-4xl mx-auto px-6 py-8 flex-1">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold mb-6 text-gray-800">Edit Education</h2>
+
+        <!-- Inline message container -->
+        <div id="formMessage" class="hidden px-4 py-3 rounded mb-4 text-white text-sm"></div>
+
+        <!-- Add Education Form -->
+        <div class="mb-6 p-4 border rounded-lg bg-gray-50">
+            <h3 class="font-semibold text-gray-700 mb-3">Add Education</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Degree input with datalist -->
+                <input list="degreeList" id="degreeInput" placeholder="Degree" 
+                       class="border rounded px-3 py-2 w-full" required
+                       oninput="this.value = this.value.replace(/[^A-Za-z.,\s]/g, '')">
+                <datalist id="degreeList">
+                    <option value="B.Sc">
+                    <option value="B.A">
+                    <option value="B.Com">
+                    <option value="B.Tech">
+                    <option value="M.Sc">
+                    <option value="M.A">
+                    <option value="M.Com">
+                    <option value="M.Tech">
+                    <option value="MBA">
+                    <option value="PhD">
+                    <option value="Diploma">
+                    <option value="Certificate">
+                </datalist>
+
+                <!-- Institution input with datalist -->
+                <input list="institutionList" id="institutionInput" placeholder="Institution" 
+                       class="border rounded px-3 py-2 w-full" required
+                       oninput="this.value = this.value.replace(/[^A-Za-z.,\s]/g, '')">
+                <datalist id="institutionList">
+                    <option value="Delhi University">
+                    <option value="Mumbai University">
+                    <option value="IIT Delhi">
+                    <option value="IIT Bombay">
+                    <option value="IIM Ahmedabad">
+                    <option value="Jawaharlal Nehru University">
+                    <option value="BITS Pilani">
+                    <option value="Anna University">
+                    <option value="VIT Vellore">
+                    <option value="Symbiosis">
+                </datalist>
+
+                <!-- Start Year dropdown -->
+                <select id="startYearInput" class="border rounded px-3 py-2 w-full" required>
+                    <option value="">Start Year</option>
+                </select>
+                <!-- End Year dropdown -->
+                <select id="endYearInput" class="border rounded px-3 py-2 w-full">
+                    <option value="">End Year</option>
+                </select>
+            </div>
+            <button type="button" onclick="addEducation()" 
+                    class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Add Education
+            </button>
+        </div>
+      
+        <!-- Education List -->
+        <form th:action="@{/candidate/profile/education/update}" method="post" >
+            <div id="educationContainer" class="flex flex-col gap-4 mb-6">
+                <!-- Existing education records -->
+                <div th:each="edu : ${profile.educationList}" 
+                     class="p-4 border rounded-lg shadow-sm flex justify-between items-center bg-white">
+                    <div>
+                        <p class="font-semibold text-gray-800" th:text="${edu.degree}"></p>
+                        <p class="text-gray-600" th:text="${edu.institution}"></p>
+                        <p class="text-sm text-gray-500" 
+                           th:text="${edu.startYear + ' - ' + (edu.endYear != null ? edu.endYear : 'Present')}"></p>
+                    </div>
+                    <button type="button" onclick="removeEducation(this)" 
+                            class="text-red-600 font-bold text-lg">×</button>
+
+                    <!-- Hidden inputs for form submission -->
+                    <input type="hidden" name="degree" th:value="${edu.degree}">
+                    <input type="hidden" name="institution" th:value="${edu.institution}">
+                    <input type="hidden" name="startYear" th:value="${edu.startYear}">
+                    <input type="hidden" name="endYear" th:value="${edu.endYear}">
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Save
+                </button>
+                <a th:href="@{/candidate/profile}" 
+                   class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                   Back
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+// Populate years from 2000 to current year
+const startYearSelect = document.getElementById("startYearInput");
+const endYearSelect = document.getElementById("endYearInput");
+
+const currentYear = new Date().getFullYear();
+
+for (let y = 2000; y <= currentYear; y++) {
+    const opt1 = document.createElement("option");
+    opt1.value = y; opt1.textContent = y;
+    startYearSelect.appendChild(opt1);
+
+    const opt2 = document.createElement("option");
+    opt2.value = y; opt2.textContent = y;
+    endYearSelect.appendChild(opt2);
+}
+
+// Show inline message
+function showFormMessage(msg, type='error') {
+    const messageDiv = document.getElementById("formMessage");
+    if(!msg) {
+        messageDiv.classList.add("hidden");
+        return;
+    }
+    messageDiv.textContent = msg;
+    messageDiv.classList.remove("hidden", "bg-red-600", "bg-green-600");
+    messageDiv.classList.add(type==='error' ? "bg-red-600" : "bg-green-600");
+    messageDiv.classList.remove("opacity-0");
+    messageDiv.classList.add("opacity-100");
+
+    setTimeout(() => {
+        messageDiv.classList.add("opacity-0");
+        setTimeout(() => messageDiv.classList.add("hidden"), 500);
+    }, 3000);
+}
+
+function addEducation() {
+    const degree = document.getElementById("degreeInput").value.trim();
+    const institution = document.getElementById("institutionInput").value.trim();
+    const startYear = document.getElementById("startYearInput").value.trim();
+    const endYear = document.getElementById("endYearInput").value.trim();
+
+    if (!degree || !institution || !startYear) {
+        showFormMessage("Please fill in Degree, Institution, and Start Year.");
+        return;
+    }
+
+    if (endYear) {
+        if (parseInt(endYear) < parseInt(startYear)) {
+            showFormMessage("End Year cannot be before Start Year.");
+            return;
+        }
+        if (parseInt(endYear) > currentYear) {
+            showFormMessage("End Year cannot be in the future.");
+            return;
+        }
+    }
+
+    const container = document.getElementById("educationContainer");
+
+    const div = document.createElement("div");
+    div.className = "p-4 border rounded-lg shadow-sm flex justify-between items-center bg-white";
+
+    div.innerHTML = `
+        <div>
+            <p class="font-semibold text-gray-800">${degree}</p>
+            <p class="text-gray-600">${institution}</p>
+            <p class="text-sm text-gray-500">${startYear} - ${endYear || 'Present'}</p>
+        </div>
+        <button type="button" onclick="removeEducation(this)" class="text-red-600 font-bold text-lg">×</button>
+        <input type="hidden" name="degree" value="${degree}">
+        <input type="hidden" name="institution" value="${institution}">
+        <input type="hidden" name="startYear" value="${startYear}">
+        <input type="hidden" name="endYear" value="${endYear}">
+    `;
+
+    container.appendChild(div);
+
+    // Clear inputs
+    document.getElementById("degreeInput").value = "";
+    document.getElementById("institutionInput").value = "";
+    document.getElementById("startYearInput").value = "";
+    document.getElementById("endYearInput").value = "";
+
+    showFormMessage("Education added successfully!", "success");
+}
+
+function removeEducation(button) {
+    button.parentElement.remove();
+}
+</script>
+
+</body>
+</html>

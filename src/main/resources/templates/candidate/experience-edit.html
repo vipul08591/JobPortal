@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+        <div class="flex items-center gap-6">
+            <a th:href="@{/candidate/applications}" class="text-gray-700 hover:text-blue-600 font-medium">Applied Jobs</a>
+            <a th:href="@{/candidate/profile}" class="text-gray-700 hover:text-blue-600 font-medium">Profile</a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-5xl mx-auto px-6 py-8 flex-1">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold mb-6 text-gray-800">Edit Experience</h2>
+
+        <!-- Inline Messages -->
+        <div id="messageBox" class="hidden mb-4 p-3 rounded text-white"></div>
+
+        <!-- Add Experience Form -->
+        <div class="mb-6 p-4 border rounded-lg bg-gray-50">
+            <h3 class="font-semibold text-gray-700 mb-3">Add Experience</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Role input with datalist -->
+                <input list="roleList" id="roleInput" placeholder="Role"
+                       class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       oninput="this.value=this.value.replace(/[^A-Za-z.,\\s]/g,'')">
+                <datalist id="roleList">
+                    <option value="Software Engineer">
+                    <option value="Senior Software Engineer">
+                    <option value="Team Lead">
+                    <option value="Project Manager">
+                    <option value="QA Engineer">
+                    <option value="Senior QA Engineer">
+                    <option value="Business Analyst">
+                    <option value="Product Manager">
+                    <option value="UI/UX Designer">
+                    <option value="Frontend Developer">
+                    <option value="Backend Developer">
+                    <option value="Full Stack Developer">
+                    <option value="DevOps Engineer">
+                    <option value="Data Analyst">
+                    <option value="Data Scientist">
+                    <option value="Technical Lead">
+                    <option value="Consultant">
+                    <option value="Intern">
+                    <option value="HR Executive">
+                    <option value="Marketing Executive">
+                </datalist>
+
+                <!-- Company input with datalist -->
+                <input list="companyList" id="companyInput" placeholder="Company"
+       class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+       oninput="this.value = this.value.replace(/[^A-Za-z0-9.,\-\\s]/g,'')">
+<datalist id="companyList">
+    <option value="Google">
+    <option value="Microsoft">
+    <option value="Amazon">
+    <option value="Facebook">
+    <option value="Apple">
+    <option value="IBM">
+    <option value="Infosys">
+    <option value="TCS">
+    <option value="Wipro">
+    <option value="Accenture">
+    <option value="Capgemini">
+    <option value="Oracle">
+    <option value="SAP">
+    <option value="Dell">
+    <option value="Cisco">
+    <option value="HP">
+    <option value="Adobe">
+    <option value="Intel">
+    <option value="VMware">
+    <option value="Siemens">
+</datalist>
+
+
+              <div class="flex flex-col">
+    <input type="month" id="startDateInput" class="border rounded px-3 py-2 w-full">
+    <span class="text-gray-400 text-sm mt-1">Start Date (YYYY-MM)</span>
+</div>
+
+<div class="flex flex-col">
+    <input type="month" id="endDateInput" class="border rounded px-3 py-2 w-full">
+    <span class="text-gray-400 text-sm mt-1">End Date (YYYY-MM or Present)</span>
+</div>
+
+                <!-- Currently Working -->
+                <div class="flex items-center gap-2 mt-2 md:mt-0">
+                    <input type="checkbox" id="currentlyWorking" class="h-4 w-4">
+                    <label for="currentlyWorking" class="text-gray-700 text-sm">Currently Working Here</label>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <textarea id="descriptionInput" rows="3" placeholder="Description"
+                      class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 mt-3"></textarea>
+
+            <!-- Add Button -->
+            <button type="button" onclick="addExperience()"
+                    class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add Experience
+            </button>
+        </div>
+
+        <!-- Experience List Form -->
+        <form th:action="@{/candidate/profile/experience/update}" method="post" >
+            <div id="experienceContainer" class="flex flex-col gap-4 mb-6">
+                <div th:each="exp : ${profile.experienceList}" class="p-4 border rounded-lg shadow-sm flex justify-between items-start bg-white relative">
+                    <button type="button" onclick="removeExperience(this)"
+                            class="absolute top-3 right-3 text-white bg-red-600 hover:bg-red-700 rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button>
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800" th:text="${exp.role}"></p>
+                        <p class="text-gray-600" th:text="${exp.company}"></p>
+                        <p class="text-sm text-gray-500" th:text="${exp.startDate + ' - ' + (exp.endDate != null ? exp.endDate : 'Present')}"></p>
+                        <p class="text-gray-700 mt-2" th:text="${exp.description}"></p>
+                    </div>
+                    <input type="hidden" name="role" th:value="${exp.role}">
+                    <input type="hidden" name="company" th:value="${exp.company}">
+                    <input type="hidden" name="startDate" th:value="${exp.startDate}">
+                    <input type="hidden" name="endDate" th:value="${exp.endDate}">
+                    <input type="hidden" name="description" th:value="${exp.description}">
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Experience</button>
+                <a th:href="@{/candidate/profile}" class="px-6 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Back</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+function addExperience() {
+    const role = document.getElementById('roleInput').value.trim();
+    const company = document.getElementById('companyInput').value.trim();
+    const startDate = document.getElementById('startDateInput').value.trim();
+    let endDate = document.getElementById('endDateInput').value.trim();
+    const description = document.getElementById('descriptionInput').value.trim();
+    const currentlyWorking = document.getElementById('currentlyWorking').checked;
+    const messageBox = document.getElementById('messageBox');
+
+    // Required fields
+    if (!role || !company || !startDate || !description) {
+        messageBox.className = 'bg-red-600 p-3 rounded mb-4 text-white';
+        messageBox.textContent = 'Please fill in all required fields.';
+        messageBox.classList.remove('hidden');
+        return;
+    }
+
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}`;
+
+    if (!currentlyWorking) {
+        if (!endDate) {
+            messageBox.className = 'bg-red-600 p-3 rounded mb-4 text-white';
+            messageBox.textContent = 'Please select an End Date or mark as currently working.';
+            messageBox.classList.remove('hidden');
+            return;
+        }
+        if (endDate < startDate) {
+            messageBox.className = 'bg-red-600 p-3 rounded mb-4 text-white';
+            messageBox.textContent = 'End Date cannot be before Start Date.';
+            messageBox.classList.remove('hidden');
+            return;
+        }
+        if (endDate > currentMonth) {
+            messageBox.className = 'bg-red-600 p-3 rounded mb-4 text-white';
+            messageBox.textContent = 'End Date cannot be in the future.';
+            messageBox.classList.remove('hidden');
+            return;
+        }
+    } else {
+        endDate = '';
+    }
+
+    messageBox.classList.add('hidden');
+
+    const container = document.getElementById('experienceContainer');
+    const div = document.createElement('div');
+    div.className = 'p-4 border rounded-lg shadow-sm flex justify-between items-start bg-white relative';
+
+    div.innerHTML = `
+        <button type="button" onclick="removeExperience(this)"
+                class="absolute top-3 right-3 text-white bg-red-600 hover:bg-red-700 rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button>
+        <div class="flex-1">
+            <p class="font-semibold text-gray-800">${role}</p>
+            <p class="text-gray-600">${company}</p>
+            <p class="text-sm text-gray-500">${startDate} - ${currentlyWorking ? 'Present' : endDate}</p>
+            <p class="text-gray-700 mt-2">${description}</p>
+        </div>
+        <input type="hidden" name="role" value="${role}">
+        <input type="hidden" name="company" value="${company}">
+        <input type="hidden" name="startDate" value="${startDate}">
+        <input type="hidden" name="endDate" value="${currentlyWorking ? '' : endDate}">
+        <input type="hidden" name="description" value="${description}">
+    `;
+    container.appendChild(div);
+
+    // Reset inputs
+    document.getElementById('roleInput').value = '';
+    document.getElementById('companyInput').value = '';
+    document.getElementById('startDateInput').value = '';
+    document.getElementById('endDateInput').value = '';
+    document.getElementById('descriptionInput').value = '';
+    document.getElementById('currentlyWorking').checked = false;
+}
+
+function removeExperience(button) {
+    button.parentElement.remove();
+}
+
+
+</script>
+
+</body>
+</html>

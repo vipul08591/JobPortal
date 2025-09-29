@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - JobPortal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/}">Job Portal</a>
+        </h1>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="flex-grow flex items-center justify-center py-12">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Create Your Account</h2>
+
+        <form th:action="@{/register}" th:object="${user}" method="post" onsubmit="return checkPasswords()" class="space-y-4">
+
+            <!-- Name -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Name</label>
+                <input type="text" th:field="*{name}" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter your name" required>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Email</label>
+                <input type="email" th:field="*{email}" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Password</label>
+                <input type="password" th:field="*{password}" id="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter your password" required minlength="8" maxlength="20">
+                <div id="passwordStrength" class="mt-1 text-sm font-medium"></div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Confirm your password" required maxlength="20">
+                <div id="passwordError" class="text-red-600 mt-1 text-sm"></div>
+            </div>
+
+            <!-- Role -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Role</label>
+                <select th:field="*{role}" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                    <option value="CANDIDATE">Candidate</option>
+                    <option value="EMPLOYER">Employer</option>
+                </select>
+            </div>
+
+            <!-- Terms -->
+            <div class="flex items-center">
+                <input type="checkbox" th:field="*{terms}" class="mr-2" id="terms" required>
+                <label class="text-sm" for="terms">
+                    I accept the <a th:href="@{/terms}" class="text-blue-600 underline" target="_blank">Terms & Conditions</a>
+                </label>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200 font-medium">Register</button>
+        </form>
+
+        <p class="mt-4 text-center text-sm">Already have an account? <a href="/login" class="text-blue-600 underline">Login</a></p>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-white border-t py-6 text-center text-gray-500 text-sm mt-auto">
+    © 2025 JobPortal. All rights reserved.
+</footer>
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const strengthDiv = document.getElementById("passwordStrength");
+
+    passwordInput.addEventListener("input", () => {
+        const val = passwordInput.value;
+        let strength = "Weak";
+        let color = "red";
+        const regexStrong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+        const regexMedium = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+        if(regexStrong.test(val)) { strength = "Strong"; color = "green"; }
+        else if(regexMedium.test(val)) { strength = "Medium"; color = "orange"; }
+        strengthDiv.textContent = "Strength: " + strength;
+        strengthDiv.style.color = color;
+    });
+
+    function checkPasswords() {
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirmPassword").value;
+        const errorDiv = document.getElementById("passwordError");
+        if(password !== confirm) {
+            errorDiv.textContent = "Passwords do not match!";
+            return false;
+        }
+        errorDiv.textContent = "";
+        return true;
+    }
+</script>
+
+</body>
+</html>

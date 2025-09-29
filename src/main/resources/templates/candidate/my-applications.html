@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Applied Jobs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+
+       
+   
+</nav>
+
+<!-- Logout Modal -->
+<div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 pointer-events-auto">
+    <div class="bg-white rounded-lg p-6 max-w-sm mx-auto shadow-lg relative z-50">
+        <h2 class="text-xl font-semibold mb-4 text-blue-600">Confirm Logout</h2>
+        <p class="mb-6 text-gray-700">Are you sure you want to logout?</p>
+        <div class="flex justify-end gap-3">
+            <button onclick="closeLogoutModal()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-6 py-8 flex-1">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">My Applications</h2>
+    <p class="text-gray-500 mb-6">Browse and track all your applied jobs in one place</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="applicationsGrid">
+        <!-- Job Card -->
+        <div th:each="app : ${applications}" class="job-card bg-white rounded-xl shadow-md p-4 transition relative h-56">
+            <!-- Status Badge -->
+            <span th:switch="${app.status}" class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full">
+                <span th:case="'Pending'" class="bg-yellow-100 text-yellow-800" th:text="${app.status}"></span>
+                <span th:case="'Viewed'" class="bg-indigo-100 text-indigo-800" th:text="${app.status}"></span>
+                <span th:case="'Shortlisted'" class="bg-green-100 text-green-800" th:text="${app.status}"></span>
+                <span th:case="'Not Shortlisted'" class="bg-red-100 text-red-800" th:text="${app.status}"></span>
+            </span>
+
+            <!-- Job Title -->
+            <h3 class="text-lg font-bold text-blue-600 mb-1">
+                <a th:href="@{'/candidate/jobs/' + ${app.job.id}}" th:text="${app.job.title}">Job Title</a>
+            </h3>
+
+            <!-- Company & Location -->
+            <p class="text-gray-600 text-sm mb-1">
+                <span th:text="${app.job.companyName}">Company Name</span> •
+                <span th:text="${app.job.companyLocation}">Location</span>
+            </p>
+
+            <!-- Job Type & Salary -->
+            <p class="text-gray-500 text-sm mb-2">
+                <span th:text="${app.job.type}">Full-Time</span>
+                <span th:if="${app.job.salary != null}">• <span th:text="${app.job.salary}">₹50k-70k</span></span>
+            </p>
+
+            <!-- Resume -->
+            <p class="text-gray-700 text-sm mt-1">
+                <span th:if="${app.resumeFileName != null}">
+                    <a th:href="@{'/candidate/resumes/' + ${app.resumeFileName}}" target="_blank"
+                       class="text-blue-600 hover:underline"
+                       th:text="${#strings.substring(app.resumeFileName, app.resumeFileName.indexOf('_') + 1)}">Resume.pdf</a>
+                </span>
+                <span th:if="${app.resumeFileName == null}" class="text-gray-400">No Resume</span>
+            </p>
+
+            <!-- Applied Date -->
+            <p class="text-gray-400 text-xs mt-2" th:text="${#temporals.format(app.appliedAt, 'yyyy-MM-dd')}">Applied On</p>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${applications.size() == 0}" class="col-span-full text-center text-gray-400 py-10">
+            You have not applied to any jobs yet.
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t py-6 text-center text-gray-500 text-sm mt-auto">
+    © 2025 JobPortal. All rights reserved.
+</footer>
+
+<script>
+    function openLogoutModal() {
+        document.getElementById('logoutModal').classList.remove('hidden');
+        document.getElementById('logoutModal').classList.add('flex');
+        // disable hover shadow while modal open
+        document.querySelectorAll('.job-card').forEach(c => c.classList.remove('hover:shadow-lg'));
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').classList.add('hidden');
+        document.getElementById('logoutModal').classList.remove('flex');
+        // restore hover shadow
+        document.querySelectorAll('.job-card').forEach(c => c.classList.add('hover:shadow-lg'));
+    }
+</script>
+</body>
+</html>

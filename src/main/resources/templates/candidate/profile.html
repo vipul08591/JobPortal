@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Candidate Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+        
+    </div>
+</nav>
+<div th:if="${successMessage}" class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
+    <span th:text="${successMessage}"></span>
+</div>
+
+<div th:if="${errorMessage}" class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+    <span th:text="${errorMessage}"></span>
+</div>
+
+<div class="max-w-5xl mx-auto px-6 py-4">
+    <p class="text-gray-700 font-medium mb-1">
+        Profile Completion: <span th:text="${profileCompletion} + '%'">0%</span>
+    </p>
+    <div class="w-full bg-gray-200 rounded-full h-4">
+        <div class="bg-blue-600 h-4 rounded-full transition-all duration-500"
+             th:style="'width:' + ${profileCompletion} + '%;'"></div>
+    </div>
+</div>
+
+<main class="max-w-5xl mx-auto px-6 py-8 flex-1">
+
+    <!-- Section 1: Basic Info -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Basic Information</h2>
+            <a th:href="@{/candidate/profile/basic-info/edit}" class="text-blue-600 hover:underline">Edit</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <img th:src="@{'/uploads/profiles/' + ${profile.profilePicture}}" 
+     alt="Profile Picture" class="w-24 h-24 rounded-full object-cover border"/>
+            
+            <div>
+                <p><strong>Name:</strong> <span th:text="${profile.user.name}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${profile.user.email}"></span></p>
+                <p><strong>Phone:</strong> <span th:text="${profile.phone}"></span></p>
+                <p><strong>Location:</strong> <span th:text="${profile.location}"></span></p>
+                <p><strong>About Me:</strong> <span th:text="${profile.profileSummary}"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Resume Upload -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Resume</h2>
+            <a th:href="@{/candidate/profile/resume/edit}" class="text-blue-600 hover:underline">Upload / Replace</a>
+        </div>
+        <p>
+            <span th:if="${profile.profileResumeFile != null}">
+                <a th:href="@{'/candidate/resumes/' + ${profile.profileResumeFile}}" 
+                   target="_blank" class="text-blue-600 hover:underline">Download Resume</a>
+            </span>
+            <span th:if="${profile.profileResumeFile == null}" class="text-gray-400">No resume uploaded</span>
+        </p>
+    </div>
+
+    <!-- Section 3: Skills -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Skills</h2>
+            <a th:href="@{/candidate/profile/skills/edit}" class="text-blue-600 hover:underline">Edit</a>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <span th:each="skill : ${profile.skills}" 
+                  class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                <span th:text="${skill}"></span>
+            </span>
+        </div>
+        <p th:if="${#lists.isEmpty(profile.skills)}" class="text-gray-400">No skills added</p>
+    </div>
+
+    <!-- Section 4: Experience -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Experience</h2>
+            <a th:href="@{/candidate/profile/experience/edit}" class="text-blue-600 hover:underline">Add / Edit</a>
+        </div>
+        <div th:each="exp : ${profile.experienceList}" class="mb-4 border-b pb-2">
+            <p><strong th:text="${exp.role}"></strong> at <span th:text="${exp.company}"></span></p>
+            <p><span th:text="${exp.startDate}"></span> - <span th:text="${exp.endDate}"></span></p>
+            <p th:text="${exp.description}" class="text-gray-600 text-sm"></p>
+        </div>
+        <p th:if="${#lists.isEmpty(profile.experienceList)}" class="text-gray-400">No experience added</p>
+    </div>
+
+    <!-- Section 5: Education -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Education</h2>
+            <a th:href="@{/candidate/profile/education/edit}" class="text-blue-600 hover:underline">Add / Edit</a>
+        </div>
+        <div th:each="edu : ${profile.educationList}" class="mb-4 border-b pb-2">
+            <p><strong th:text="${edu.degree}"></strong> at <span th:text="${edu.institution}"></span></p>
+            <p><span th:text="${edu.startYear}"></span> - <span th:text="${edu.endYear}"></span></p>
+        </div>
+        <p th:if="${#lists.isEmpty(profile.educationList)}" class="text-gray-400">No education added</p>
+    </div>
+
+    <!-- Section 6: Languages -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Languages</h2>
+            <a th:href="@{/candidate/profile/languages/edit}" class="text-blue-600 hover:underline">Edit</a>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <span th:each="lang : ${profile.languages}" 
+                  class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                <span th:text="${lang}"></span>
+            </span>
+        </div>
+        <p th:if="${#lists.isEmpty(profile.languages)}" class="text-gray-400">No languages added</p>
+    </div>
+
+    <!-- Section 7: Social / Portfolio -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="text-xl font-bold">Social / Portfolio</h2>
+            <a th:href="@{/candidate/profile/social/edit}" class="text-blue-600 hover:underline">Edit</a>
+        </div>
+        <p><strong>LinkedIn:</strong> <a th:href="${profile.linkedIn}" target="_blank" class="text-blue-600 hover:underline" th:text="${profile.linkedIn}">-</a></p>
+        <p><strong>GitHub:</strong> <a th:href="${profile.github}" target="_blank" class="text-blue-600 hover:underline" th:text="${profile.github}">-</a></p>
+        <p><strong>Portfolio:</strong> <a th:href="${profile.portfolioUrl}" target="_blank" class="text-blue-600 hover:underline" th:text="${profile.portfolioUrl}">-</a></p>
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t py-6 text-center text-gray-500 text-sm mt-auto">
+    © 2025 JobPortal. All rights reserved.
+</footer>
+
+<script>
+function openLogoutModal() {
+    document.getElementById('logoutModal').classList.remove('hidden');
+    document.getElementById('logoutModal').classList.add('flex');
+}
+function closeLogoutModal() {
+    document.getElementById('logoutModal').classList.add('hidden');
+    document.getElementById('logoutModal').classList.remove('flex');
+}
+
+
+</script>
+</body>
+</html>

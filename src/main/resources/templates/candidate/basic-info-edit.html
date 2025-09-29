@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">
+            <a th:href="@{/candidate/dashboard}">Job Portal</a>
+        </h1>
+        <div class="flex items-center gap-6">
+            <a th:href="@{/candidate/applications}" class="text-gray-700 hover:text-blue-600 font-medium">Applied Jobs</a>
+            <a th:href="@{/candidate/profile}" class="text-gray-700 hover:text-blue-600 font-medium">Profile</a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-6 py-8 flex-1">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-6">Edit Profile</h2>
+
+        <form th:action="@{/candidate/profile/basic-info/update}" th:object="${profile}" method="post" enctype="multipart/form-data">
+
+            <!-- Profile Picture -->
+            <div class="flex items-center gap-6 mb-6">
+                <img id="profilePreview"
+                     th:src="@{'/uploads/profiles/' + ${profile.profilePicture}}"
+                     alt="Profile Picture"
+                     class="w-24 h-24 rounded-full object-cover border"/>
+                
+                <div class="flex flex-col gap-2">
+                    <label class="block text-gray-700 font-medium">Profile Picture</label>
+                    <input type="file" name="profilePicture" accept="image/*"
+                           onchange="validateAndPreviewImage(event)"
+                           class="border p-2 rounded w-full"/>
+                    <small class="text-gray-500 text-sm">Max size: 2 MB</small>
+                </div>
+            </div>
+
+            <!-- Name -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">Full Name <span class="text-red-500">*</span></label>
+                <input type="text" name="name" th:value="${profile.user.name}" required maxlength="50"
+                       pattern="[A-Za-z\s]+"
+                       title="Only letters and spaces"
+                       class="border p-2 rounded w-full"/>
+            </div>
+
+         
+
+            <!-- Phone -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">Phone <span class="text-red-500">*</span></label>
+                <input type="tel" name="phone" th:value="${profile.phone}" required maxlength="10"
+                       pattern="^[6-9]\d{9}$"
+                       title="10-digit phone number starting with 6-9"
+                       class="border p-2 rounded w-full"/>
+            </div>
+
+            <!-- Location -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">Location <span class="text-red-500">*</span></label>
+                <select name="location" required class="border p-2 rounded w-full">
+                    <option value="">-- Select City --</option>
+                    <option value="Bangalore" th:selected="${profile.location=='Bangalore'}">Bangalore</option>
+                    <option value="Chennai" th:selected="${profile.location=='Chennai'}">Chennai</option>
+                    <option value="Delhi" th:selected="${profile.location=='Delhi'}">Delhi</option>
+                    <option value="Hyderabad" th:selected="${profile.location=='Hyderabad'}">Hyderabad</option>
+                    <option value="Mumbai" th:selected="${profile.location=='Mumbai'}">Mumbai</option>
+                    <!-- Add other cities as needed -->
+                </select>
+            </div>
+
+            <!-- About Me -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">About Me</label>
+                <textarea name="profileSummary" rows="4" maxlength="100"
+                          placeholder="Write about yourself (max 100 characters)"
+                          class="border p-2 rounded w-full"
+                          th:text="${profile.profileSummary}"></textarea>
+                <p class="text-sm text-gray-500 mt-1">
+                    <span id="aboutCount">0</span>/100 characters
+                </p>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+function validateAndPreviewImage(event){
+    const file = event.target.files[0];
+    if(file){
+        if(file.size > 2*1024*1024){
+            alert("File size must be less than 2 MB");
+            event.target.value = "";
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(){
+            document.getElementById('profilePreview').src = reader.result;
+        }
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
+</body>
+</html>
