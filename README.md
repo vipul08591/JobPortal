@@ -12,6 +12,14 @@ It allows users to register as **Candidates** or **Employers**, providing person
 
 ---
 
+## 🔗 Live Demo
+
+Check out the live application here: [JobHive Live](https://jobhive2.onrender.com/)  
+
+**Database:** Hosted on [Aiven for MySQL](https://aiven.io/)  
+
+---
+
 ## ✨ Features
 
 ### 👨‍🎓 Candidate
@@ -39,48 +47,14 @@ It allows users to register as **Candidates** or **Employers**, providing person
 
 | Frontend | Backend | Database | Build Tool |
 |----------|--------|---------|------------|
-| Thymeleaf, HTML, JavaScript, Tailwind CSS | Java, Spring Boot, Hibernate | MySQL | Maven |
+| Thymeleaf, HTML, JavaScript, Tailwind CSS | Java, Spring Boot, Hibernate | MySQL (Aiven) | Maven |
 
 ---
 
-## ⚙️ Installation & Setup
-
-1. **Clone the repository**
-```bash
-git clone <repository-url>
-cd JobHive
-
-2.Setup Database
-
--Create a MySQL database (e.g., jobhive_db)
-
-Update application.properties:
-
-spring.datasource.url=jdbc:mysql://localhost:3306/jobhive_db
-spring.datasource.username=<your-db-username>
-spring.datasource.password=<your-db-password>
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-
-
-Build & Run
-
-mvn clean install
-mvn spring-boot:run
-
-
-Access
-
-Open: http://localhost:8080
-
-
 🌟 Future Enhancements
-
 Email notifications for application updates
 
 Resume parsing to auto-fill candidate profiles
 
 📄 License
-
 This project is licensed under the MIT License.
