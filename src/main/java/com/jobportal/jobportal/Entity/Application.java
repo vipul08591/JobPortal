@@ -25,6 +25,7 @@ public class Application {
     private String coverLetter; // optional message from candidate
 
     private LocalDateTime appliedAt; // timestamp when applied
+    
 
     // Constructors
     public Application() {
@@ -97,6 +98,7 @@ public class Application {
     public void setAppliedAt(LocalDateTime appliedAt) {
         this.appliedAt = appliedAt;
     }
+ 
 
     @Override
     public String toString() {

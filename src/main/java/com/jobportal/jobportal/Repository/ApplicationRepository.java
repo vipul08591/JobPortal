@@ -16,4 +16,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 	boolean existsByJobAndCandidate(Job job, User candidate);
 
 	Optional<Application> findByResumeFileName(String resumeFileName);
+	
+
+
 }

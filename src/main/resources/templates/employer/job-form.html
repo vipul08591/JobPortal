@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Post a Job - JobPortal</title>
+    <title>Post a Job - JobHive</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -37,9 +37,10 @@
         <!-- Job Location -->
         <div>
             <label class="block font-medium">Job Location</label>
-            <input type="text" th:field="*{location}" 
-                   class="w-full border border-gray-300 rounded px-3 py-2" 
-                   placeholder="Enter job location" required>
+            <select th:field="*{location}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <option value="">Select location</option>
+                <option th:each="loc : ${locations}" th:value="${loc}" th:text="${loc}"></option>
+            </select>
             <div th:if="${#fields.hasErrors('location')}" class="text-red-600 text-sm" th:errors="*{location}"></div>
         </div>
 
@@ -59,18 +60,20 @@
         <!-- Company Name -->
         <div>
             <label class="block font-medium">Company Name</label>
-            <input type="text" th:field="*{companyName}" 
-                   class="w-full border border-gray-300 rounded px-3 py-2" 
-                   placeholder="Enter company name" required>
+            <select th:field="*{companyName}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <option value="">Select company</option>
+                <option th:each="comp : ${companies}" th:value="${comp}" th:text="${comp}"></option>
+            </select>
             <div th:if="${#fields.hasErrors('companyName')}" class="text-red-600 text-sm" th:errors="*{companyName}"></div>
         </div>
 
         <!-- Company Location -->
         <div>
             <label class="block font-medium">Company Location</label>
-            <input type="text" th:field="*{companyLocation}" 
-                   class="w-full border border-gray-300 rounded px-3 py-2" 
-                   placeholder="Enter company location" required>
+            <select th:field="*{companyLocation}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <option value="">Select company location</option>
+                <option th:each="loc : ${locations}" th:value="${loc}" th:text="${loc}"></option>
+            </select>
             <div th:if="${#fields.hasErrors('companyLocation')}" class="text-red-600 text-sm" th:errors="*{companyLocation}"></div>
         </div>
 
@@ -107,6 +110,7 @@
         charCount.textContent = remaining >= 0 ? remaining : 0;
     });
 </script>
+
 
 </body>
 </html>

@@ -1,7 +1,11 @@
 package com.jobportal.jobportal.Entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -34,8 +38,7 @@ public class User {
 	@NotBlank
 	private String role;
 
-	@AssertTrue(message = "You must accept the terms and conditions")
-	private boolean terms;
+	
 
 	// --- getters & setters ---
 
@@ -78,12 +81,5 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	public boolean isTerms() {
-	    return terms;
-	}
-
-	// Setter
-	public void setTerms(boolean terms) {
-	    this.terms = terms;
-	}
+	
 }

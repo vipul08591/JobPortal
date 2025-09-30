@@ -33,6 +33,8 @@ import com.jobportal.jobportal.Repository.JobRepository;
 import com.jobportal.jobportal.Repository.UserRepository;
 import com.jobportal.jobportal.Service.CandidateProfileService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/employer")
 public class EmployerController {
@@ -49,22 +51,57 @@ public class EmployerController {
 
 	@Autowired
 	private CandidateProfileService profileService;
-
+	
 	// Employer dashboard
 	@GetMapping("/dashboard")
-	public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-		User employer = userRepo.findByEmail(userDetails.getUsername());
-		List<Job> jobs = jobRepo.findByEmployer(employer); // Only jobs posted by this employer
-		model.addAttribute("jobs", jobs);
-		return "employer/dashboard";
+	public String dashboard(@AuthenticationPrincipal UserDetails userDetails, 
+	                        Model model, 
+	                        HttpSession session) {
+
+	    User employer = userRepo.findByEmail(userDetails.getUsername());
+	    model.addAttribute("username", employer.getName());
+
+	    // Show login message only once
+	    if (session.getAttribute("loginMessage") == null) {
+	        model.addAttribute("loginMessage", "You are logged in!");
+	        session.setAttribute("loginMessage", "shown");
+	    }
+
+	    
+
+	    List<Job> jobs = jobRepo.findByEmployer(employer); // Only jobs posted by this employer
+	    model.addAttribute("jobs", jobs);
+
+	    return "employer/dashboard";
 	}
+
 
 	// Show form to post a new job
 	@GetMapping("/jobs/new")
 	public String showJobForm(Model model) {
-		model.addAttribute("job", new Job());
-		return "employer/job-form";
+	    model.addAttribute("job", new Job());
+
+	    // Pre-populated Job Locations
+	    List<String> locations = List.of(
+	        "Delhi", "Mumbai", "Bangalore", "Chennai", "Hyderabad",
+	        "Pune", "Kolkata", "Noida", "Gurgaon", "Jaipur",
+	        "Lucknow", "Chandigarh", "Ahmedabad", "Bhubaneswar",
+	        "Indore", "Nagpur", "Coimbatore", "Patna", "Goa", "Kochi"
+	    );
+	    model.addAttribute("locations", locations);
+
+	    // Pre-populated Company Names
+	    List<String> companies = List.of(
+	        "Infosys", "TCS", "Wipro", "HCL", "Accenture",
+	        "Capgemini", "IBM", "Cognizant", "Tech Mahindra", "L&T",
+	        "Google", "Amazon", "Microsoft", "Apple", "Adobe",
+	        "Flipkart", "Paytm", "Zomato", "Swiggy", "Reliance"
+	    );
+	    model.addAttribute("companies", companies);
+
+	    return "employer/job-form"; // Thymeleaf template
 	}
+
 
 	// Save new job
 	@PostMapping("/jobs")

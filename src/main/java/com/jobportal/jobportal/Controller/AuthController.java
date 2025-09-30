@@ -16,44 +16,46 @@ import jakarta.validation.Valid;
 @Controller
 public class AuthController {
 
-    private final UserRepository userRepo;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	private final UserRepository userRepo;
+	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthController(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
-    @GetMapping("/")
-    public String home() {
-        return "home"; // returns home.html
-    }
-    @GetMapping("/register")
-    public String showRegisterForm(User user) {
-        return "register";
-    }
+	public AuthController(UserRepository userRepo) {
+		this.userRepo = userRepo;
+	}
 
-    @PostMapping("/register")
-    public String processRegister(@Valid @ModelAttribute("user") User user,
-                                  BindingResult result,
-                                  RedirectAttributes redirectAttributes) {
+	@GetMapping("/")
+	public String home() {
+		return "home"; // returns home.html
+	}
 
-        // Check if email already exists
-        if (userRepo.findByEmail(user.getEmail()) != null) {
-            result.rejectValue("email", "error.user", "Email is already registered");
-        }
+	@GetMapping("/register")
+	public String showRegisterForm(User user) {
+		return "register";
+	}
 
-        if (result.hasErrors()) {
-            return "register"; // redisplay form with errors
-        }
+	@PostMapping("/register")
+	public String processRegister(@Valid @ModelAttribute("user") User user,
+	                              BindingResult result,
+	                              RedirectAttributes redirectAttributes) {
 
-        // Encode password and save
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepo.save(user);
+	    // Check if email already exists
+	    if (userRepo.findByEmail(user.getEmail()) != null) {
+	        result.rejectValue("email", "error.user", "Email is already registered");
+	    }
 
-        // Add success message as flash attribute
-        redirectAttributes.addFlashAttribute("successMessage", "Registered successfully!");
+	    if (result.hasErrors()) {
+	        return "register"; // redisplay form with errors
+	    }
 
-        // Stay on register page instead of redirecting to login
-        return "redirect:/register";
-    }
-    
+	    // Encode password and save
+	    user.setPassword(passwordEncoder.encode(user.getPassword()));
+	    userRepo.save(user);
+
+	    // Add flash attribute for success message
+	    redirectAttributes.addFlashAttribute("successMessage", "Registered successfully!");
+
+	    // Redirect to /register so the message shows as a flash
+	    return "redirect:/register";
+	}
+
 }
